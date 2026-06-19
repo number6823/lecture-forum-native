@@ -10,6 +10,9 @@ export default {
     plugins: [],
     theme: {
         extend: {
+            maxWidth: {
+                "250" : "1000px",
+            },
             colors: {
                 /* 이 부분에 내가 원하는 컬러 팔레트를 마음대로 적으면 됨 */
                 background: {
@@ -48,4 +51,10 @@ export default {
             },
         },
     },
+    safelist: [
+        // 코드에서 니가 찾지 못해도,여기에 기록한 클래스는 만들어줘
+        {
+            pattern: /(bg|text|border)-(primary|secondary|error|success|warning|info)-(main|contends)/,
+        },
+    ],
 } satisfies Config;
