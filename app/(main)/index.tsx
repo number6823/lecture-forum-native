@@ -1,4 +1,3 @@
-// /app/index.tsx
 import { Text } from "react-native";
 
 function HomeScreen() {
