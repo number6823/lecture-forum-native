@@ -48,7 +48,6 @@ function Select({
                     className,
                 )}
                 onPress={() => {
-                    console.log("!");
                     setIsOpen(!isOpen);
                 }}>
                 <TextComponent
@@ -108,7 +107,7 @@ function Select({
                                             setIsOpen(false);
                                         }}
                                         className={twMerge(
-                                            "px-5 py-4 border-divider flex-row justify-between",
+                                            "px-5 py-4 border-b border-divider flex-row justify-between",
                                             item.value === value && "bg-primary-main/10",
                                         )}>
                                         <TextComponent

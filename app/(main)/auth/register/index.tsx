@@ -1,4 +1,4 @@
-import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView, Text } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,7 +6,6 @@ import { RegisterUserInputType, registerUserSchema } from "@/schemas/user/regist
 import { twMerge } from "tailwind-merge";
 import Card from "@/components/common/card/Card";
 import InputGroup from "@/components/common/input/InputGroup";
-import errorMessage from "@/components/common/form/ErrorMessage";
 import ErrorMessage from "@/components/common/form/ErrorMessage";
 import Button from "@/components/common/button/Button";
 import userApi from "@/api/user/userApi";
@@ -15,12 +14,11 @@ import TextComponent from "@/components/common/text/TextComponent";
 import SelectGroup from "@/components/common/select/SelectGroup";
 
 function AuthRegisterPage() {
-    // React에서는 useNavigate() 준비를 해뒀는데, React-Native에서는 useRouter();
+    // React에서는 useNavigate() 준비를 해뒀었는데, React-Native에서는 useRouter();
     const router = useRouter();
 
     const {
         control,
-        register,
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
@@ -42,10 +40,21 @@ function AuthRegisterPage() {
     const onSubmit = async (data: RegisterUserInputType) => {
         try {
             const { confirmPassword, ...submitData } = data;
+
+            // string 에는 slice(시작인덱스, 끝 전 인덱스)
+            const formattedDate =
+                data.birthdate && data.birthdate !== ""
+                    ? data.birthdate.slice(0, 4) +
+                      "-" +
+                      data.birthdate.slice(4, 6) +
+                      "-" +
+                      data.birthdate.slice(6, 8)
+                    : undefined;
+
             const payload = {
                 ...submitData,
                 phoneNumber: data.phoneNumber === "" ? undefined : data.phoneNumber,
-                birthdate: data.birthdate === "" ? undefined : data.birthdate,
+                birthdate: formattedDate,
             };
 
             await userApi.registerUser(payload);
@@ -74,20 +83,20 @@ function AuthRegisterPage() {
     };
 
     // PC에서는 문제가 아닌데, 모바일에서는 키보드가 화면을 침범하게 됨
-    // 키보드가 화면 하단에서 올라오면 화면이 줄어들도록 적응해줘야 되는데 : KeyboardAvoidingView
+    // 키보드가 화면 하단에서 올라오면 화면이 줄어들도록 적용해줘야 되는데 : KeyboardAvoidingView
     // behavior 속성에 "지금 현재 플랫폼에 따라서 동작 방식을 달리 적용" 해줘야 함
     // ios (아이폰)일 때는 padding을 통해 하단에 키보드가 올라갈 공간을 마련해 주는 것
-    // aos (안드로이드)일 떼는 "height"를 통해 화면이 줄어들도록 적용해 주는 것
+    // aos (안드로이드)일 때는 height를 통해 화면이 줄어들도록 적용해 주는 것
 
-    // ScrollView 컴포넌트 : 호면이 넘어갈 만큼 넓거나, 길면 스크롤바를 만들어주는 녀석
+    // ScrollView 컴포넌트 : 화면이 넘어갈 만큼 넓거나, 길면 스크롤바를 만들어주는 녀석
     // 모바일 앱은 ScrollView로 감싸주지 않으면 스크롤바가 안 나옴. 그래서 ScrollView로 감싸주어야 함
-    // 심지어 이 ScrollView는 패딩 영역을 주려면 className으로 주지 않고
+    // 심지어 이 ScrollView는 className으로 주지 않고
     // contentContainerClassName 이라는 속성으로 부여해야 함
-    // showVerticalScrollIndicator 속성 : 스크롤바를 보여줄지 여부를 결정하는 속성
+    // showsVerticalScrollIndicator 속성 : 스크롤바를 보여줄지 여부를 결정하는 속성
     // keywordShouldPersistTaps 속성 : 터치 이벤트가 자식 컴포넌트로 전파되는지 여부를 결정하는 속성
-    //                              handled 값을 주지 않으면 키보드가 열려있는 상태에서 터치 시 키보드만 닫힘
+    //                                handled 값을 주지 않으면 키보드가 열려있는 상태에서 터치 시 키보드만 닫힘
 
-    // 모바일에서는 form 태그가 존재하지 않음
+    // 모바일에서는 form 과 같은 역할을 해주는 게 없음
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -102,14 +111,16 @@ function AuthRegisterPage() {
                         회원가입
                     </TextComponent>
 
-                    {/* react-hook-form에서 register를 꺼내서 사용하는 방법은 편의 기능
-                    Controller 컴포넌트는 react-hook-form에서 제공하는 컴포넌트로,
-                    폼 필드를 컨트롤할 수 있는 기능을 제공한다.
-                    render 속성은 Controller 컴포넌트의 필수 속성으로,
-                    폼 필드를 렌더링하는 함수를 지정한다.
-                    name 속성은 폼 필드의 이름을 지정한다.
-                    control 속성에는 react-hook-form에서 꺼내온 control을 넣어줌
-                    */}
+                    {/*
+                        react-hook-form에서 register를 꺼내서 사용하는 방법은 한 방에 처리하는 편의기능
+                        Controller 컴포넌트는 react-hook-form에서 제공하는 컴포넌트로,
+                        폼 필드를 컨트롤할 수 있는 기능을 제공한다.
+                        render 속성은 Controller 컴포넌트의 필수 속성으로,
+                        폼 필드를 렌더링하는 함수를 지정한다.
+                        name 속성은 폼 필드의 이름을 지정한다.
+                        control 속성에는 react-hook-form에서 꺼내온 control을 넣어줌
+                     */}
+
                     <Controller
                         control={control}
                         name={"username"}
@@ -117,9 +128,9 @@ function AuthRegisterPage() {
                             return (
                                 <InputGroup
                                     label={"아이디"}
-                                    placeholder={"아이디는 4자 이상 입력해주세요"}
+                                    placeholder={"4자 이상 입력해주세요"}
                                     onBlur={onBlur}
-                                    onChangeText={onChange}
+                                    onChangeText={onChange} // HTML onChange 속성 => React-Native onChangeText 속성
                                     value={value}
                                     errorMessage={errors.username?.message}
                                 />
@@ -135,7 +146,7 @@ function AuthRegisterPage() {
                                 <InputGroup
                                     label={"비밀번호"}
                                     placeholder={"6자 이상 입력해주세요"}
-                                    secureTextEntry={true}
+                                    secureTextEntry={true} // 텍스트 마스킹 속성
                                     onBlur={onBlur}
                                     onChangeText={onChange}
                                     value={value}
@@ -153,7 +164,7 @@ function AuthRegisterPage() {
                                 <InputGroup
                                     label={"비밀번호 확인"}
                                     placeholder={"비밀번호를 다시 입력해주세요"}
-                                    secureTextEntry={true}
+                                    secureTextEntry={true} // 텍스트 마스킹 속성
                                     onBlur={onBlur}
                                     onChangeText={onChange}
                                     value={value}
@@ -187,7 +198,7 @@ function AuthRegisterPage() {
                             return (
                                 <InputGroup
                                     label={"닉네임"}
-                                    placeholder={"2자 이상 10자이내 닉네임을 입력해주세요"}
+                                    placeholder={"2자 이상 10자 이내 닉네임을 입력해주세요"}
                                     onBlur={onBlur}
                                     onChangeText={onChange}
                                     value={value}
@@ -296,7 +307,7 @@ function AuthRegisterPage() {
                         size={"large"}
                         fullWidth={true}
                         className={"mt-2"}
-                        onPress={() => router.back()}>
+                        onPress={() => router.push("/auth/login")}>
                         로그인하러 가기
                     </Button>
                 </Card>

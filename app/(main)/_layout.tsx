@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { Slot } from "expo-router";
-import MainHeader from "@/components/layout/main/MainHeader";
+import MainHeader from "../../components/layout/main/MainHeader";
 import MainFooter from "@/components/layout/main/MainFooter";
 
 function MainLayout() {

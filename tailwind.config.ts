@@ -31,7 +31,7 @@ export default {
                 },
                 text: {
                     default: "var(--text-default)",
-                    paper: "var(--text-paper)",
+                    secondary: "var(--text-secondary)",
                 },
                 divider: "var(--divider)",
                 primary: {

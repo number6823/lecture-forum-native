@@ -37,7 +37,7 @@ function Button({
     // 버튼 위에 올라가는 글자에 대한 색상을 결정짓는 함수
     const getTextColorClasses = () => {
         if (variant === "contained") return `text-${color}-contrast`;
-        return `text-${color}-mian`;
+        return `text-${color}-main`;
     };
 
 
