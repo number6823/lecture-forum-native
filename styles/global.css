@@ -10,7 +10,7 @@
         --bg-default: #F3F4F6;
         --bg-paper: #FFFFFF;
 
-        --text-defalut: #1F2937;
+        --text-default: #1F2937;
         --text-secondary: #9CA3AF;
 
         --divider: #E5E7EB;
@@ -39,7 +39,7 @@
         --bg-default: #111827;
         --bg-paper: #1F2937;
 
-        --text-defalut: #F9FAFB;
+        --text-default: #F9FAFB;
         --text-secondary: #6B7280;
 
         --divider: #374151;
@@ -71,7 +71,7 @@
             --bg-default: #111827;
             --bg-paper: #1F2937;
 
-            --text-defalut: #F9FAFB;
+            --text-default: #F9FAFB;
             --text-secondary: #6B7280;
 
             --divider: #374151;
