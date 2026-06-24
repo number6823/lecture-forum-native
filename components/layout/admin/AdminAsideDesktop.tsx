@@ -21,7 +21,7 @@ function AdminAsideDesktop() {
                     <Button
                         variant={"text"}
                         color={"primary"}
-                        className={"text-xl font-semibold border-b border-divider"}>
+                        className={"h-16 text-xl font-semibold border-b border-divider"}>
                         관리자 센터
                     </Button>
                 </Link>
@@ -29,7 +29,8 @@ function AdminAsideDesktop() {
                 <View className={"px-3 py-4 gap-1"}>
                     {ADMIN_NAV_LIST.map(item => {
                         // 지금 사용자가 보고 있는 화면이 어떤 메뉴에 속하는지 강조
-                        const isActive = pathname.startsWith(item.path);
+
+                        const isActive = item.path === "/" ? pathname === "/" : pathname.startsWith(item.path);
                         return (
                             <Link href={item.path} key={item.path} asChild>
                                 <Pressable
@@ -44,7 +45,7 @@ function AdminAsideDesktop() {
                                         name={item.icon as any}
                                         size={18}
                                         className={
-                                            isActive ? "text-primary-main" : "text-text-default"
+                                            isActive ? "text-text-default" : "text-text-default"
                                         }
                                     />
                                     <TextComponent
