@@ -11,6 +11,7 @@ import Button from "@/components/common/button/Button";
 import Card from "@/components/common/card/Card";
 import Badge from "@/components/common/badge/Badge";
 import { Feather } from "@expo/vector-icons";
+import Pagination from "../../../../components/common/pagination/Pagination";
 
 function AdminUserListPage() {
     const [list, setList] = useState<User[]>([]);
@@ -42,8 +43,10 @@ function AdminUserListPage() {
         loadUsers(currentPage, pageSize).then(() => {});
     }, [currentPage, pageSize]);
 
+    const totalPage = Math.ceil(total / pageSize) || 1;
+
     const handleDeleteUser = async (id: number) => {
-        const excuteDelete = async () => {
+        const executeDelete = async () => {
             try {
                 await adminUserApi.deleteUser(id);
                 loadUsers(currentPage, pageSize).then(() => {});
@@ -59,12 +62,12 @@ function AdminUserListPage() {
 
         if (Platform.OS === "web") {
             if (!confirm("정말 이 유저를 삭제 처리 하시겠습니까?")) {
-                excuteDelete().then(() => {});
+                executeDelete().then(() => {});
             }
         } else {
             Alert.alert("경고", "정말 이 유저를 삭제 처리 하시겠습니까?", [
-                {text: "취소", style: "cancel"},
-                {text: "삭제", style: "destructive", onPress: excuteDelete }
+                { text: "취소", style: "cancel" },
+                { text: "삭제", style: "destructive", onPress: executeDelete },
             ]);
         }
     };
@@ -103,20 +106,30 @@ function AdminUserListPage() {
                         유저 정보
                     </TextComponent>
                     <TextComponent
-                        className={twMerge(["w-16"], ["font-bold", "text-text-secondary", "px-2"])}>
+                        className={twMerge(
+                            ["w-16"],
+                            ["font-bold", "text-text-secondary", "text-center"],
+                        )}>
                         권한
                     </TextComponent>
 
                     <TextComponent
-                        className={twMerge(["w-24"], ["font-bold", "text-text-secondary", "px-2"])}>
+                        className={twMerge(
+                            ["hidden", "md:flex", "w-24"],
+                            ["font-bold", "text-text-secondary", "text-center"],
+                        )}>
                         가입일
                     </TextComponent>
 
                     <TextComponent
-                        className={twMerge(["w-20"], ["font-bold", "text-text-secondary", "px-2"])}>
+                        className={twMerge(
+                            ["w-20"],
+                            ["font-bold", "text-text-secondary", "text-center"],
+                        )}>
                         관리
                     </TextComponent>
                 </View>
+
                 <ScrollView className={"flex-1"}>
                     {list.length === 0 && (
                         <View className={twMerge("py-10", "justify-center", "items-center")}>
@@ -208,6 +221,17 @@ function AdminUserListPage() {
                     ))}
                 </ScrollView>
             </Card>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPage={totalPage}
+                onPageChange={newPage =>
+                    router.setParams({ page: String(newPage), size: String(pageSize) })
+                }
+                size={"medium"}
+                color={"primary"}
+                shape={"rounded"}
+            />
         </View>
     );
 }
