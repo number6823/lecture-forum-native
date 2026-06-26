@@ -1,8 +1,8 @@
-import { StyleColorType, StyleSizeType } from "@/types/style";
+import { StyleColorType, StyleSizeType } from "../../../types/style";
 import { Pressable, useWindowDimensions, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 import { Feather } from "@expo/vector-icons";
-import TextComponent from "@/components/common/text/TextComponent";
+import TextComponent from "../../../components/common/text/TextComponent";
 
 interface PaginationProps {
     currentPage: number; // 현재 사용자가 위치한 페이지 번호
