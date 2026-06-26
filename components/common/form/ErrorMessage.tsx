@@ -1,5 +1,5 @@
 import { TextProps, Text } from "react-native";
-import { StyleSizeType } from "@/types/style";
+import { StyleSizeType } from "../../../types/style";
 import { twMerge } from "tailwind-merge";
 
 interface ErrorMessageProps extends TextProps {

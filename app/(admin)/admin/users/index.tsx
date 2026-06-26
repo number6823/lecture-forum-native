@@ -61,7 +61,7 @@ function AdminUserListPage() {
         };
 
         if (Platform.OS === "web") {
-            if (!confirm("정말 이 유저를 삭제 처리 하시겠습니까?")) {
+            if (confirm("정말 이 유저를 삭제 처리 하시겠습니까?")) {
                 executeDelete().then(() => {});
             }
         } else {
