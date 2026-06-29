@@ -1,9 +1,8 @@
-import TextComponent from "../../../../../components/common/text/TextComponent";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AdminNoticeInputType, adminNoticeSchema } from "@/schemas/notice/adminNoticeSchema";
-import adminNoticeApi from "../../../../../api/admin/adminNoticeApi";
+import adminNoticeApi from "../../../../../../api/admin/adminNoticeApi";
 import { Alert, Platform, ScrollView, View } from "react-native";
 import { twMerge } from "tailwind-merge";
 import Title from "@/components/common/title/Title";
@@ -11,13 +10,20 @@ import InputGroup from "@/components/common/input/InputGroup";
 import ErrorMessage from "@/components/common/form/ErrorMessage";
 import Button from "@/components/common/button/Button";
 import TextareaGroup from "@/components/common/textarea/TextareaGroup";
+import { useEffect, useState } from "react";
+import noticeApi from "@/api/user/noticeApi";
+import LoadingIndicator from "@/components/common/loading/LoadingIndicator";
 
-function AdminNoticeCreatePage() {
+function AdminNoticeUpdatePage() {
     const router = useRouter();
+    const { id } = useLocalSearchParams<{ id: string }>();
+    const noticeId = Number(id);
+    const [isLoading, setIsLoading] = useState(true);
 
     const {
         control,
         handleSubmit,
+        reset,
         setError,
         formState: { errors, isSubmitting },
     } = useForm({
@@ -29,16 +35,42 @@ function AdminNoticeCreatePage() {
         },
     });
 
+    useEffect(() => {
+        const loadNotice = async () => {
+            try {
+                const result = await noticeApi.getNoticeById(noticeId);
+                reset({
+                    title: result.title,
+                    content: result.content,
+                })
+            } catch (error) {
+                console.log(error);
+                if (Platform.OS === "web") {
+                    alert("공지사항을 불러오는 중에 오류가 발생했습니다.");
+                    router.back();
+                } else {
+                    Alert.alert("오류", "공지사항을 불러오는 중에 오류가 발생했습니다.", [
+                        { text: "확인", onPress: () => router.back() },
+                    ]);
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadNotice().then(() => {});
+    }, [noticeId, reset, router]);
+
     const onSubmit = async (data: AdminNoticeInputType) => {
         try {
-            await adminNoticeApi.createNotice(data);
+            await adminNoticeApi.updateNotice(noticeId, data);
 
             if (Platform.OS === "web") {
-                alert("공지사항이 성공적으로 등록되었습니다.");
-                router.push("/admin/notices");
+                alert("공지사항이 성공적으로 수정되었습니다.");
+              router.back();
             } else {
                 Alert.alert("완료", "공지사항이 성공적으로 등록되었습니다.", [
-                    { text: "확인", onPress: () => router.push("/admin/notices") },
+                    { text: "확인", onPress: () => router.back() },
                 ]);
             }
         } catch (error) {
@@ -47,12 +79,19 @@ function AdminNoticeCreatePage() {
         }
     };
 
+    if (isLoading) {
+        return <LoadingIndicator fullScreen />
+    }
+
     return (
         <View className={twMerge("flex-1", "w-full")}>
-            <Title title={"공지사항 등록"} description={"서비스에 새로운 공지사항을 등록합니다."} />
+            <Title title={"공지사항 수정"} description={"기존에 등록된 공지사항을 수정합니다."} />
 
             <ScrollView
-                className={twMerge(["flex-1", "p-6"], ["bg-background-paper","border", "border-divider", "rounded-xl"])}>
+                className={twMerge(
+                    ["flex-1", "p-6"],
+                    ["bg-background-paper", "border", "border-divider", "rounded-xl"],
+                )}>
                 <Controller
                     control={control}
                     name={"title"}
@@ -108,7 +147,7 @@ function AdminNoticeCreatePage() {
                         color={"primary"}
                         onPress={handleSubmit(onSubmit)}
                         disabled={isSubmitting}>
-                        {isSubmitting ? "저장 중..." : "저장"}
+                        {isSubmitting ? "저장 중..." : "수정하기"}
                     </Button>
                 </View>
             </ScrollView>
@@ -116,4 +155,4 @@ function AdminNoticeCreatePage() {
     );
 }
 
-export default AdminNoticeCreatePage;
+export default AdminNoticeUpdatePage;

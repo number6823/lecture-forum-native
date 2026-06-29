@@ -8,7 +8,7 @@ import { twMerge } from "tailwind-merge";
 import Title from "@/components/common/title/Title";
 import TextComponent from "@/components/common/text/TextComponent";
 import Button from "@/components/common/button/Button";
-import adminNoticeApi from "@/api/admin/admin/adminNoticeApi";
+import adminNoticeApi from "@/api/admin/adminNoticeApi";
 
 function AdminNoticeDetailPage() {
     const router = useRouter();
