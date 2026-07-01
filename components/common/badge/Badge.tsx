@@ -7,6 +7,7 @@ interface BadgeProps extends ViewProps {
     color?: StyleColorType;
     variant?: StyleVariantType;
     size?: StyleSizeType;
+    textClasses?: string;
 }
 
 function Badge({
@@ -14,6 +15,7 @@ function Badge({
     variant = "outlined",
     size = "medium",
     className,
+    textClasses,
     children,
     ...props
 }: BadgeProps) {
@@ -55,7 +57,7 @@ function Badge({
             )}
             {...props}>
             {typeof children === "string" ? (
-                <TextComponent className={twMerge("font-bold", getTextColorClasses())}>
+                <TextComponent className={twMerge("font-bold", getTextColorClasses(), textClasses)}>
                     {children}
                 </TextComponent>
             ) : (
