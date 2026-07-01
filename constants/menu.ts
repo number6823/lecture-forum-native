@@ -12,3 +12,5 @@ export const MYPAGE_NAV_LIST = [
     { path: "/my.inquiry", label: "1:1 문의 내역" },
     { path: "/my/withdraw", label: "회원 탈퇴", isDanger: true },
 ];
+
+
